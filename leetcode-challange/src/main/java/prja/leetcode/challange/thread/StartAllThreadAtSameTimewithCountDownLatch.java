@@ -19,7 +19,7 @@ public class StartAllThreadAtSameTimewithCountDownLatch extends Thread {
             System.out.println(getName()+" starts at: %sn"+ Instant.now());
             // do actual work here...
             for(int i=0;i<100;i++) {
-            	Thread.sleep(100);
+            	Thread.sleep(1);
             }
             System.out.println("Thread"+getName()+" finishedd.."  );
            

@@ -1,5 +1,9 @@
 package prja.leetcode.challange.general;
 
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+
 public class FirstNonRepeatingChar {
 	public static void main() {
 		String str = "zzzzzbbbccccddehhhhiii";
@@ -17,6 +21,17 @@ public class FirstNonRepeatingChar {
 			}
 		}
 		System.out.println("character = " + Character.valueOf((char) nonRepeatingCharAsInt));
+		
+		
+		List<Integer> numbers = Arrays.asList(8,1,2,3,4,5,9);
+		int result = numbers.stream().reduce(1, (a, b) -> a * b);
+		System.out.println("Result: " + result);
+		
+		
+		int result2 = numbers.stream()
+                .max(Comparator.reverseOrder())
+                .orElse(0);
+		System.out.println(result2);
 	}
 
 }
