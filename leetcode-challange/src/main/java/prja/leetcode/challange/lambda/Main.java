@@ -388,185 +388,7 @@ public class Main {
         });
 	}
 
-	private static void scenario10() {
-		List<Employee> employees = Arrays.asList(
-                 new Employee(1, "John Doe", "Engineering", new BigDecimal("100000.00"), LocalDate.of(2018, 10, 15)),
-                 new Employee(2, "Jane Smith", "Engineering", new BigDecimal("95000.00"), LocalDate.of(2019, 5, 20)),
-                 new Employee(3, "Michael Johnson", "Sales", new BigDecimal("80000.00"), LocalDate.of(2020, 2, 8)),
-                 new Employee(4, "Emily Davis", "HR", new BigDecimal("75000.00"), LocalDate.of(2017, 12, 12)),
-                 new Employee(5, "Robert Wilson", "Engineering", new BigDecimal("110000.00"), LocalDate.of(2016, 8, 25)),
-                 new Employee(6, "Lisa Brown", "Sales", new BigDecimal("90000.00"), LocalDate.of(2019, 11, 30))
-         );
-
-         // 1. Filter Employees by Department
-         String departmentFilter = "Engineering";
-         List<Employee> engineeringEmployees = employees.stream()
-                 .filter(e -> e.getDepartment().equals(departmentFilter))
-                 .collect(Collectors.toList());
-
-         System.out.println("Engineering Employees:");
-         engineeringEmployees.forEach(System.out::println);
-
-         // 2. Sort Employees by Salary (Descending)
-         List<Employee> employeesSortedBySalary = employees.stream()
-                 .sorted((e1, e2) -> e2.getSalary().compareTo(e1.getSalary()))
-                 .collect(Collectors.toList());
-
-         System.out.println("\nEmployees Sorted by Salary (Descending):");
-         employeesSortedBySalary.forEach(e -> System.out.println(e.getName() + " - Salary: $" + e.getSalary()));
-
-         // 3. Group Employees by Department and Calculate Average Salary
-         Map<String, Double> averageSalaryByDepartment = employees.stream()
-                 .collect(Collectors.groupingBy(
-                         Employee::getDepartment,
-                         Collectors.averagingDouble(e -> e.getSalary().doubleValue())
-                 ));
-
-         System.out.println("\nAverage Salary by Department:");
-         averageSalaryByDepartment.forEach((dept, avgSalary) ->
-                 System.out.println(dept + ": $" + avgSalary));
-
-         // 4. Calculate Total Salary Expense
-         BigDecimal totalSalaryExpense = employees.stream()
-                 .map(Employee::getSalary)
-                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-         System.out.println("\nTotal Salary Expense: $" + totalSalaryExpense);
-	}
-
-	private static void scenario11() {
-		List<Transaction> transactions = Arrays.asList(
-                 new Transaction(1, new BigDecimal("100.00"), "debit", LocalDateTime.of(2023, 1, 10, 8, 30)),
-                 new Transaction(2, new BigDecimal("150.00"), "credit", LocalDateTime.of(2023, 2, 15, 12, 0)),
-                 new Transaction(3, new BigDecimal("75.50"), "credit", LocalDateTime.of(2023, 3, 20, 15, 45)),
-                 new Transaction(4, new BigDecimal("200.00"), "debit", LocalDateTime.of(2023, 4, 5, 10, 15)),
-                 new Transaction(5, new BigDecimal("50.00"), "credit", LocalDateTime.of(2023, 5, 12, 9, 0))
-         );
-
-         // 1. Filter Transactions by Type
-         String typeFilter = "credit";
-         List<Transaction> creditTransactions = transactions.stream()
-                 .filter(t -> t.getType().equals(typeFilter))
-                 .collect(Collectors.toList());
-
-         System.out.println("Credit Transactions:");
-         creditTransactions.forEach(System.out::println);
-
-         // 2. Map and Calculate Total Credit Amount
-         BigDecimal totalCreditAmount = transactions.stream()
-                 .filter(t -> t.getType().equals("credit"))
-                 .map(Transaction::getAmount)
-                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-         System.out.println("\nTotal Credit Amount: $" + totalCreditAmount);
-
-         // 3. Calculate Average Transaction Amount
-         OptionalDouble averageTransactionAmount = transactions.stream()
-                 .mapToDouble(t -> t.getAmount().doubleValue())
-                 .average();
-
-         System.out.println("\nAverage Transaction Amount: $" +
-                 (averageTransactionAmount.isPresent() ? averageTransactionAmount.getAsDouble() : 0.0));
-
-         // 4. Find Maximum Transaction Amount
-         Optional<BigDecimal> maxTransactionAmount = transactions.stream()
-                 .map(Transaction::getAmount)
-                 .max(BigDecimal::compareTo);
-
-         System.out.println("\nMaximum Transaction Amount: $" +
-                 (maxTransactionAmount.isPresent() ? maxTransactionAmount.get() : BigDecimal.ZERO));
-	}
-
-	private static void scenario12() {
-		List<Product2> products = Arrays.asList(
-                 new Product2(1, "Laptop", "Electronics", new BigDecimal("1200.00"), 10),
-                 new Product2(2, "Smartphone", "Electronics", new BigDecimal("800.00"), 15),
-                 new Product2(3, "Shoes", "Fashion", new BigDecimal("100.00"), 50),
-                 new Product2(4, "Headphones", "Electronics", new BigDecimal("150.00"), 20),
-                 new Product2(5, "T-shirt", "Fashion", new BigDecimal("20.00"), 100)
-         );
-
-         // 1. Filter Products by Category
-         String categoryFilter = "Electronics";
-         List<Product2> electronicsProducts = products.stream()
-                 .filter(p -> p.getCategory().equals(categoryFilter))
-                 .collect(Collectors.toList());
-
-         System.out.println("Electronics Products:");
-         electronicsProducts.forEach(System.out::println);
-
-         // 2. Sort Products by Price (Ascending)
-         List<Product2> productsSortedByPrice = products.stream()
-                 .sorted((p1, p2) -> p1.getPrice().compareTo(p2.getPrice()))
-                 .collect(Collectors.toList());
-
-         System.out.println("\nProducts Sorted by Price (Ascending):");
-         productsSortedByPrice.forEach(p -> System.out.println(p.getName() + " - Price: $" + p.getPrice()));
-
-         // 3. Map and Calculate Total Inventory Value
-         BigDecimal totalInventoryValue = products.stream()
-                 .map(p -> p.getPrice().multiply(BigDecimal.valueOf(p.getAvailability())))
-                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-         System.out.println("\nTotal Inventory Value: $" + totalInventoryValue);
-
-         // 4. Find Maximum Priced Product
-         Optional<Product2> maxPricedProduct = products.stream()
-                 .max((p1, p2) -> p1.getPrice().compareTo(p2.getPrice()));
-         
-
-         System.out.println("\nMaximum Priced Product:");
-         maxPricedProduct.ifPresent(System.out::println);
-	}
-   
-	private static void scenario13() {
-		List<Employee> employees = Arrays.asList(
-                 new Employee(1, "John Doe", "Engineering", new BigDecimal("100000.00"), LocalDate.of(2015, 3, 15)),
-                 new Employee(2, "Jane Smith", "Finance", new BigDecimal("90000.00"), LocalDate.of(2016, 5, 20)),
-                 new Employee(3, "Michael Johnson", "Engineering", new BigDecimal("110000.00"), LocalDate.of(2014, 7, 10)),
-                 new Employee(4, "Emily Davis", "HR", new BigDecimal("80000.00"), LocalDate.of(2017, 9, 5)),
-                 new Employee(5, "Robert Wilson", "Finance", new BigDecimal("95000.00"), LocalDate.of(2018, 11, 12)),
-                 new Employee(6, "Megan Brown", "Engineering", new BigDecimal("105000.00"), LocalDate.of(2019, 2, 28)),
-                 new Employee(7, "William Martinez", "HR", new BigDecimal("85000.00"), LocalDate.of(2020, 4, 25))
-         );
-         
-
-         // 1. Filter Employees by Department
-         String departmentFilter = "Engineering";
-         List<Employee> filteredEmployees = employees.stream()
-                 .filter(e -> e.getDepartment().equals(departmentFilter))
-                 .collect(Collectors.toList());
-
-         System.out.println("Employees in " + departmentFilter + " Department:");
-         filteredEmployees.forEach(System.out::println);
-
-         // 2. Sort Employees by Salary (Descending)
-         List<Employee> sortedEmployees = employees.stream()
-                 .sorted((e1, e2) -> e2.getSalary().compareTo(e1.getSalary()))
-                 .collect(Collectors.toList());
-
-         System.out.println("\nEmployees Sorted by Salary (Descending):");
-         sortedEmployees.forEach(e -> System.out.println(e.getName() + " - Salary: $" + e.getSalary()));
-
-         // 3. Map and Calculate Total Salary Expense
-         BigDecimal totalSalaryExpense = employees.stream()
-                 .map(Employee::getSalary)
-                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-         System.out.println("\nTotal Salary Expense: $" + totalSalaryExpense);
-
-         // 4. Group Employees by Department and Calculate Average Salary
-         Map<String, Double> averageSalaryByDepartment = employees.stream()
-                 .collect(Collectors.groupingBy(
-                         Employee::getDepartment,
-                         Collectors.averagingDouble(e -> e.getSalary().doubleValue())
-                 ));
-
-         System.out.println("\nAverage Salary by Department:");
-         averageSalaryByDepartment.forEach((dept, avgSalary) ->
-                 System.out.println(dept + ": $" + avgSalary));
-	}
-
+	
 	private static void scenario2() {
 		List<Employee> employees = Arrays.asList(
                 new Employee("John Doe", "Engineering", new BigDecimal("75000"),
@@ -991,5 +813,183 @@ public class Main {
 
 		System.out.println("\nMaximum Order Amount: $" + maxOrderAmount);
 	}
+	 private static void scenario10() {
+			List<Employee> employees = Arrays.asList(
+	                 new Employee(1, "John Doe", "Engineering", new BigDecimal("100000.00"), LocalDate.of(2018, 10, 15)),
+	                 new Employee(2, "Jane Smith", "Engineering", new BigDecimal("95000.00"), LocalDate.of(2019, 5, 20)),
+	                 new Employee(3, "Michael Johnson", "Sales", new BigDecimal("80000.00"), LocalDate.of(2020, 2, 8)),
+	                 new Employee(4, "Emily Davis", "HR", new BigDecimal("75000.00"), LocalDate.of(2017, 12, 12)),
+	                 new Employee(5, "Robert Wilson", "Engineering", new BigDecimal("110000.00"), LocalDate.of(2016, 8, 25)),
+	                 new Employee(6, "Lisa Brown", "Sales", new BigDecimal("90000.00"), LocalDate.of(2019, 11, 30))
+	         );
+
+	         // 1. Filter Employees by Department
+	         String departmentFilter = "Engineering";
+	         List<Employee> engineeringEmployees = employees.stream()
+	                 .filter(e -> e.getDepartment().equals(departmentFilter))
+	                 .collect(Collectors.toList());
+
+	         System.out.println("Engineering Employees:");
+	         engineeringEmployees.forEach(System.out::println);
+
+	         // 2. Sort Employees by Salary (Descending)
+	         List<Employee> employeesSortedBySalary = employees.stream()
+	                 .sorted((e1, e2) -> e2.getSalary().compareTo(e1.getSalary()))
+	                 .collect(Collectors.toList());
+
+	         System.out.println("\nEmployees Sorted by Salary (Descending):");
+	         employeesSortedBySalary.forEach(e -> System.out.println(e.getName() + " - Salary: $" + e.getSalary()));
+
+	         // 3. Group Employees by Department and Calculate Average Salary
+	         Map<String, Double> averageSalaryByDepartment = employees.stream()
+	                 .collect(Collectors.groupingBy(
+	                         Employee::getDepartment,
+	                         Collectors.averagingDouble(e -> e.getSalary().doubleValue())
+	                 ));
+
+	         System.out.println("\nAverage Salary by Department:");
+	         averageSalaryByDepartment.forEach((dept, avgSalary) ->
+	                 System.out.println(dept + ": $" + avgSalary));
+
+	         // 4. Calculate Total Salary Expense
+	         BigDecimal totalSalaryExpense = employees.stream()
+	                 .map(Employee::getSalary)
+	                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+	         System.out.println("\nTotal Salary Expense: $" + totalSalaryExpense);
+		}
+
+		private static void scenario11() {
+			List<Transaction> transactions = Arrays.asList(
+	                 new Transaction(1, new BigDecimal("100.00"), "debit", LocalDateTime.of(2023, 1, 10, 8, 30)),
+	                 new Transaction(2, new BigDecimal("150.00"), "credit", LocalDateTime.of(2023, 2, 15, 12, 0)),
+	                 new Transaction(3, new BigDecimal("75.50"), "credit", LocalDateTime.of(2023, 3, 20, 15, 45)),
+	                 new Transaction(4, new BigDecimal("200.00"), "debit", LocalDateTime.of(2023, 4, 5, 10, 15)),
+	                 new Transaction(5, new BigDecimal("50.00"), "credit", LocalDateTime.of(2023, 5, 12, 9, 0))
+	         );
+
+	         // 1. Filter Transactions by Type
+	         String typeFilter = "credit";
+	         List<Transaction> creditTransactions = transactions.stream()
+	                 .filter(t -> t.getType().equals(typeFilter))
+	                 .collect(Collectors.toList());
+
+	         System.out.println("Credit Transactions:");
+	         creditTransactions.forEach(System.out::println);
+
+	         // 2. Map and Calculate Total Credit Amount
+	         BigDecimal totalCreditAmount = transactions.stream()
+	                 .filter(t -> t.getType().equals("credit"))
+	                 .map(Transaction::getAmount)
+	                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+	         System.out.println("\nTotal Credit Amount: $" + totalCreditAmount);
+
+	         // 3. Calculate Average Transaction Amount
+	         OptionalDouble averageTransactionAmount = transactions.stream()
+	                 .mapToDouble(t -> t.getAmount().doubleValue())
+	                 .average();
+
+	         System.out.println("\nAverage Transaction Amount: $" +
+	                 (averageTransactionAmount.isPresent() ? averageTransactionAmount.getAsDouble() : 0.0));
+
+	         // 4. Find Maximum Transaction Amount
+	         Optional<BigDecimal> maxTransactionAmount = transactions.stream()
+	                 .map(Transaction::getAmount)
+	                 .max(BigDecimal::compareTo);
+
+	         System.out.println("\nMaximum Transaction Amount: $" +
+	                 (maxTransactionAmount.isPresent() ? maxTransactionAmount.get() : BigDecimal.ZERO));
+		}
+
+		private static void scenario12() {
+			List<Product2> products = Arrays.asList(
+	                 new Product2(1, "Laptop", "Electronics", new BigDecimal("1200.00"), 10),
+	                 new Product2(2, "Smartphone", "Electronics", new BigDecimal("800.00"), 15),
+	                 new Product2(3, "Shoes", "Fashion", new BigDecimal("100.00"), 50),
+	                 new Product2(4, "Headphones", "Electronics", new BigDecimal("150.00"), 20),
+	                 new Product2(5, "T-shirt", "Fashion", new BigDecimal("20.00"), 100)
+	         );
+
+	         // 1. Filter Products by Category
+	         String categoryFilter = "Electronics";
+	         List<Product2> electronicsProducts = products.stream()
+	                 .filter(p -> p.getCategory().equals(categoryFilter))
+	                 .collect(Collectors.toList());
+
+	         System.out.println("Electronics Products:");
+	         electronicsProducts.forEach(System.out::println);
+
+	         // 2. Sort Products by Price (Ascending)
+	         List<Product2> productsSortedByPrice = products.stream()
+	                 .sorted((p1, p2) -> p1.getPrice().compareTo(p2.getPrice()))
+	                 .collect(Collectors.toList());
+
+	         System.out.println("\nProducts Sorted by Price (Ascending):");
+	         productsSortedByPrice.forEach(p -> System.out.println(p.getName() + " - Price: $" + p.getPrice()));
+
+	         // 3. Map and Calculate Total Inventory Value
+	         BigDecimal totalInventoryValue = products.stream()
+	                 .map(p -> p.getPrice().multiply(BigDecimal.valueOf(p.getAvailability())))
+	                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+	         System.out.println("\nTotal Inventory Value: $" + totalInventoryValue);
+
+	         // 4. Find Maximum Priced Product
+	         Optional<Product2> maxPricedProduct = products.stream()
+	                 .max((p1, p2) -> p1.getPrice().compareTo(p2.getPrice()));
+	         
+
+	         System.out.println("\nMaximum Priced Product:");
+	         maxPricedProduct.ifPresent(System.out::println);
+		}
+	   
+		private static void scenario13() {
+			List<Employee> employees = Arrays.asList(
+	                 new Employee(1, "John Doe", "Engineering", new BigDecimal("100000.00"), LocalDate.of(2015, 3, 15)),
+	                 new Employee(2, "Jane Smith", "Finance", new BigDecimal("90000.00"), LocalDate.of(2016, 5, 20)),
+	                 new Employee(3, "Michael Johnson", "Engineering", new BigDecimal("110000.00"), LocalDate.of(2014, 7, 10)),
+	                 new Employee(4, "Emily Davis", "HR", new BigDecimal("80000.00"), LocalDate.of(2017, 9, 5)),
+	                 new Employee(5, "Robert Wilson", "Finance", new BigDecimal("95000.00"), LocalDate.of(2018, 11, 12)),
+	                 new Employee(6, "Megan Brown", "Engineering", new BigDecimal("105000.00"), LocalDate.of(2019, 2, 28)),
+	                 new Employee(7, "William Martinez", "HR", new BigDecimal("85000.00"), LocalDate.of(2020, 4, 25))
+	         );
+	         
+
+	         // 1. Filter Employees by Department
+	         String departmentFilter = "Engineering";
+	         List<Employee> filteredEmployees = employees.stream()
+	                 .filter(e -> e.getDepartment().equals(departmentFilter))
+	                 .collect(Collectors.toList());
+
+	         System.out.println("Employees in " + departmentFilter + " Department:");
+	         filteredEmployees.forEach(System.out::println);
+
+	         // 2. Sort Employees by Salary (Descending)
+	         List<Employee> sortedEmployees = employees.stream()
+	                 .sorted((e1, e2) -> e2.getSalary().compareTo(e1.getSalary()))
+	                 .collect(Collectors.toList());
+
+	         System.out.println("\nEmployees Sorted by Salary (Descending):");
+	         sortedEmployees.forEach(e -> System.out.println(e.getName() + " - Salary: $" + e.getSalary()));
+
+	         // 3. Map and Calculate Total Salary Expense
+	         BigDecimal totalSalaryExpense = employees.stream()
+	                 .map(Employee::getSalary)
+	                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+	         System.out.println("\nTotal Salary Expense: $" + totalSalaryExpense);
+
+	         // 4. Group Employees by Department and Calculate Average Salary
+	         Map<String, Double> averageSalaryByDepartment = employees.stream()
+	                 .collect(Collectors.groupingBy(
+	                         Employee::getDepartment,
+	                         Collectors.averagingDouble(e -> e.getSalary().doubleValue())
+	                 ));
+
+	         System.out.println("\nAverage Salary by Department:");
+	         averageSalaryByDepartment.forEach((dept, avgSalary) ->
+	                 System.out.println(dept + ": $" + avgSalary));
+		}
 
 }

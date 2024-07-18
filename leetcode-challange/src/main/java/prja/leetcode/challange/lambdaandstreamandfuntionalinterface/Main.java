@@ -4,6 +4,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -70,441 +71,7 @@ public class Main {
         System.out.println("\nEmployees sorted by salary:");
         sortedBySalary.forEach(e -> System.out.println(e.getName() + ": " + e.getSalary()));
 	}
-	private static void extracted10() {
-		List<Employee> employees = Arrays.asList(
-                new Employee(1, "John Doe", 30, 50000, "IT"),
-                new Employee(2, "Jane Smith", 25, 60000, "Finance"),
-                new Employee(3, "Bob Johnson", 35, 75000, "IT"),
-                new Employee(4, "Alice Williams", 28, 45000, "HR"),
-                new Employee(5, "Michael Brown", 32, 80000, "Finance")
-        );
-
-        // 51. Grouping and Aggregating: Group employees by department and find average salary in each department
-        Map<String, Double> averageSalaryByDepartment = employees.stream()
-                .collect(Collectors.groupingBy(Employee::getDepartment,
-                        Collectors.averagingDouble(Employee::getSalary2)));
-
-        System.out.println("Average salary by department:");
-        averageSalaryByDepartment.forEach((dept, avgSalary) ->
-                System.out.println(dept + ": " + avgSalary));
-
-        // 52. Parallel Stream Processing: Using parallel stream to calculate total salary
-        double totalSalaryParallel = employees.parallelStream()
-                .mapToDouble(Employee::getSalary2)
-                .sum();
-
-        System.out.println("\nTotal salary using parallel stream: " + totalSalaryParallel);
-
-        // 53. Combining Streams: Combine employees and their managers into a single stream
-        List<Employee> managers = Arrays.asList(
-                new Employee(6, "Sarah Johnson", 40, 90000, "IT"),
-                new Employee(7, "Emily Davis", 38, 85000, "Finance")
-        );
-
-        Stream<Employee> combinedStream = Stream.concat(
-                employees.stream(),
-                managers.stream());
-
-        System.out.println("\nCombined stream of employees and managers:");
-        combinedStream.forEach(System.out::println);
-
-        // 54. Stream APIs in Collections: Using stream() directly on a list and performing operations
-        List<String> employeeNames = employees.stream()
-                .map(Employee::getName)
-                .collect(Collectors.toList());
-
-        System.out.println("\nEmployee names:");
-        System.out.println(employeeNames);
-
-        // 55. Handling Optional in Streams: Finding the highest salary among employees
-        Optional<Double> maxSalary = employees.stream()
-                .map(Employee::getSalary2)
-                .max(Double::compare);
-
-        maxSalary.ifPresent(max -> System.out.println("\nHighest salary among employees: " + max));
-
-        // 56. State Management: Demonstrating use of effectively final variables in lambda expressions
-        double bonusFactor = 1.1;
-        List<Double> salariesWithBonus = employees.stream()
-                .map(emp -> emp.getSalary2() * bonusFactor)
-                .collect(Collectors.toList());
-
-        System.out.println("\nSalaries with bonus factor applied:");
-        System.out.println(salariesWithBonus);
-
-        // 57. Custom Functional Interfaces: Defining and using a custom functional interface
-        FunctionalInterfaceExample functionalInterface = (a, b) -> a * b;
-        int result = functionalInterface.calculate(5, 10);
-
-        System.out.println("\nResult of custom functional interface: " + result);
-
-        // 58. Stream Performance Profiling: Measuring performance with stream operations
-        long startTime = System.nanoTime();
-        List<Employee> highSalaryEmployees = employees.stream()
-                .filter(emp -> emp.getSalary2() > 60000)
-                .collect(Collectors.toList());
-        long endTime = System.nanoTime();
-        long duration = (endTime - startTime) / 1_000_000; // Milliseconds
-
-        System.out.println("\nTime taken to filter high salary employees: " + duration + " ms");
-
-        // 59. Immutable Streams: Ensure immutability by using Collectors.toUnmodifiableList() for result collection
-        List<String> immutableNames = employees.stream()
-                .map(Employee::getName)
-                .collect(Collectors.toUnmodifiableList());
-
-        // 60. Advanced Stream Patterns: Implementing sliding window pattern using custom logic
-        System.out.println("\nEmployees processed in pairs:");
-        IntStream.range(0, employees.size() - 1)
-                .mapToObj(i -> employees.get(i).getName() + " - " + employees.get(i + 1).getName())
-                .forEach(System.out::println);
-	}
-	private static void extracted11() {
-		List<Employee> employees = Arrays.asList(
-                new Employee(1, "John Doe", 30, 50000, "IT"),
-                new Employee(2, "Jane Smith", 25, 60000, "Finance"),
-                new Employee(3, "Bob Johnson", 35, 75000, "IT"),
-                new Employee(4, "Alice Williams", 28, 45000, "HR"),
-                new Employee(5, "Michael Brown", 32, 80000, "Finance")
-        );
-
-        // 71. Stream API Collectors: Using toMap() for advanced mapping operations
-        Map<Integer, String> idToNameMap = employees.stream()
-                .collect(Collectors.toMap(Employee::getEmployeeId, Employee::getName));
-
-        System.out.println("Employee ID to Name mapping:");
-        System.out.println(idToNameMap);
-
-        // 72. Stream FlatMap vs Map: Using flatMap to flatten nested lists
-        List<List<String>> nestedSkills = Arrays.asList(
-                Arrays.asList("Java", "Spring"),
-                Arrays.asList("Python", "Django"),
-                Arrays.asList("JavaScript", "React", "Node.js")
-        );
-
-        List<String> allSkills = nestedSkills.stream()
-                .flatMap(List::stream)
-                .collect(Collectors.toList());
-
-        System.out.println("\nAll skills combined from nested lists:");
-        System.out.println(allSkills);
-
-        // 73. Stream Reduce: Using reduce to find the highest salary
-        Optional<Double> maxSalary = employees.stream()
-                .map(Employee::getSalary2)
-                .reduce(Double::max);
-
-        maxSalary.ifPresent(max -> System.out.println("\nHighest salary among employees: " + max));
-
-        // 74. Stream CollectingAndThen: Using collectingAndThen for post-processing after collection
-        List<Employee> highPaidEmployees = employees.stream()
-                .filter(emp -> emp.getSalary2() > 70000)
-                .collect(Collectors.collectingAndThen(
-                        Collectors.toList(),
-                        Collections::unmodifiableList
-                ));
-
-        System.out.println("\nHigh paid employees (salary > 70000):");
-        highPaidEmployees.forEach(System.out::println);
-
-        // 75. Stream GroupingBy with Downstream Collectors: Grouping employees by department and finding average salary
-        Map<String, Double> averageSalaryByDepartment = employees.stream()
-                .collect(Collectors.groupingBy(Employee::getDepartment,
-                        Collectors.averagingDouble(Employee::getSalary2)));
-
-        System.out.println("\nAverage salary by department:");
-        averageSalaryByDepartment.forEach((dept, avgSalary) ->
-                System.out.println(dept + ": " + avgSalary));
-
-        // 76. Stateful Transformations: Using Stream.iterate for stateful transformations
-        List<Integer> powersOfTwo = Stream.iterate(1, n -> n * 2)
-                .limit(5)
-                .collect(Collectors.toList());
-
-        System.out.println("\nPowers of two:");
-        System.out.println(powersOfTwo);
-
-        // 77. Stream Filtering and Mapping: Advanced filtering and mapping with predicates and functions
-        List<String> namesStartingWithJ = employees.stream()
-                .filter(emp -> emp.getName().startsWith("J"))
-                .map(Employee::getName)
-                .collect(Collectors.toList());
-
-        System.out.println("\nEmployee names starting with 'J':");
-        System.out.println(namesStartingWithJ);
-
-        // 78. Stream Peeking and Side Effects: Using peek for debugging and logging in stream pipelines
-        List<Employee> employeesWithHighSalary = employees.stream()
-                .peek(emp -> System.out.println("Processing employee: " + emp.getName()))
-                .filter(emp -> emp.getSalary2() > 60000)
-                .collect(Collectors.toList());
-
-        System.out.println("\nEmployees with salary > 60000:");
-        employeesWithHighSalary.forEach(System.out::println);
-
-        // 79. Stream Iteration and Streams of Primitives: Using IntStream to calculate sum of employee ages
-        int totalAge = employees.stream()
-                .mapToInt(Employee::getAge)
-                .sum();
-
-        System.out.println("\nTotal age of all employees: " + totalAge);
-
-        // 80. Custom Stream Operations: Defining and using custom stream operations with lambdas and functional interfaces
-        List<Employee> filteredByAgeRange = employees.stream()
-                .filter(ageBetween(25, 35))
-                .collect(Collectors.toList());
-
-        System.out.println("\nEmployees aged between 25 and 35:");
-        filteredByAgeRange.forEach(System.out::println);
-	}
-	private static void extracted12() {
-		List<Employee> employees = Arrays.asList(
-                new Employee(1, "John Doe", 30, 50000, "IT"),
-                new Employee(2, "Jane Smith", 25, 60000, "Finance"),
-                new Employee(3, "Bob Johnson", 35, 75000, "IT"),
-                new Employee(4, "Alice Williams", 28, 45000, "HR"),
-                new Employee(5, "Michael Brown", 32, 80000, "Finance")
-        );
-
-        // 81. Stream Collectors.joining: Concatenate employee names into a single string
-        String allNames = employees.stream()
-                .map(Employee::getName)
-                .collect(Collectors.joining(", "));
-
-        System.out.println("All employee names: " + allNames);
-
-        // 82. Stream Partitioning: Partition employees into two groups based on salary threshold
-        Map<Boolean, List<Employee>> salaryPartition = employees.stream()
-                .collect(Collectors.partitioningBy(emp -> emp.getSalary2() >= 60000));
-
-        System.out.println("\nEmployees partitioned by salary >= 60000:");
-        System.out.println("High salary: " + salaryPartition.get(true));
-        System.out.println("Low salary: " + salaryPartition.get(false));
-
-        // 83. Stream Custom Reduction: Custom reduction to find the total salary of all employees
-        Double totalSalary = employees.stream()
-                .collect(Collectors.reducing(0.0, Employee::getSalary2, Double::sum));
-
-        System.out.println("\nTotal salary of all employees: " + totalSalary);
-
-        // 84. Stream Custom Collectors: Custom collector to concatenate employee names by department
-        Map<String, String> namesByDepartment = employees.stream()
-                .collect(Collectors.groupingBy(Employee::getDepartment,
-                        Collectors.mapping(Employee::getName, Collectors.joining(", "))));
-
-        System.out.println("\nEmployee names by department:");
-        namesByDepartment.forEach((dept, names) -> System.out.println(dept + ": " + names));
-
-        // 85. Stream Infinite Streams: Generate infinite stream of random numbers and limit to 10
-        List<Integer> randomNumbers = IntStream.generate(() -> (int) (Math.random() * 100))
-                .limit(10)
-                .boxed()
-                .collect(Collectors.toList());
-
-        System.out.println("\nGenerated random numbers:");
-        System.out.println(randomNumbers);
-
-        // 86. Stream Primitives and Boxing: Map int ages to Integer and find average age
-        OptionalDouble averageAge = employees.stream()
-                .mapToInt(Employee::getAge)
-                .average();
-
-        System.out.println("\nAverage age of employees: " + (averageAge.isPresent() ? averageAge.getAsDouble() : "N/A"));
-
-        // 87. Stream Stateful Operations: Building a stream with Stream.Builder
-        Stream.Builder<Employee> employeeBuilder = Stream.builder();
-        employees.forEach(employeeBuilder::add);
-
-        System.out.println("\nStream of employees built with Stream.Builder:");
-        employeeBuilder.build().forEach(System.out::println);
-
-        // 88. Stream Limiting and Skipping: Limiting and skipping elements in a stream
-        List<Employee> limitedEmployees = employees.stream()
-                .skip(2)
-                .limit(2)
-                .collect(Collectors.toList());
-
-        System.out.println("\nEmployees after skipping 2 and limiting to 2:");
-        limitedEmployees.forEach(System.out::println);
-
-        // 89. Stream Min and Max: Finding employee with minimum and maximum salary
-        Optional<Employee> minSalaryEmployee = employees.stream()
-                .min((emp1, emp2) -> Double.compare(emp1.getSalary2(), emp2.getSalary2()));
-
-        Optional<Employee> maxSalaryEmployee = employees.stream()
-                .max((emp1, emp2) -> Double.compare(emp1.getSalary2(), emp2.getSalary2()));
-
-        System.out.println("\nEmployee with minimum salary: " + minSalaryEmployee.orElse(null));
-        System.out.println("Employee with maximum salary: " + maxSalaryEmployee.orElse(null));
-
-        // 90. Stream Distinct: Finding distinct departments among employees
-        List<String> distinctDepartments = employees.stream()
-                .map(Employee::getDepartment)
-                .distinct()
-                .collect(Collectors.toList());
-
-        System.out.println("\nDistinct departments among employees:");
-        System.out.println(distinctDepartments);
-
-        // 91. Stream Sorted: Sorting employees by department and age
-        List<Employee> sortedEmployees = employees.stream()
-                .sorted((emp1, emp2) -> {
-                    if (emp1.getDepartment().equals(emp2.getDepartment())) {
-                        return emp1.getAge() - emp2.getAge();
-                    } else {
-                        return emp1.getDepartment().compareTo(emp2.getDepartment());
-                    }
-                })
-                .collect(Collectors.toList());
-
-        System.out.println("\nEmployees sorted by department and age:");
-        sortedEmployees.forEach(System.out::println);
-
-        // 92. Stream Peek vs ForEach: Using peek and forEach for debugging and terminal actions
-        employees.stream()
-                .peek(emp -> System.out.println("Processing employee: " + emp.getName()))
-                .forEach(emp -> System.out.println("Finished processing: " + emp.getName()));
-
-        // 93. Stream Reduce with Identity and Accumulator: Using reduce with identity and accumulator functions
-        Optional<Employee> highestPaidEmployee = employees.stream()
-                .reduce((emp1, emp2) -> emp1.getSalary2() > emp2.getSalary2() ? emp1 : emp2);
-
-        System.out.println("\nEmployee with highest salary: " + highestPaidEmployee.orElse(null));
-
-        // 94. Stream Parallel Processing and Thread Safety: Handling thread safety with parallel streams
-        employees.parallelStream()
-                .forEach(emp -> System.out.println("Employee processed in parallel: " + emp.getName()));
-
-        // 95. Stream Performance Tuning: Optimizing performance with fewer pipeline stages
-        List<String> highSalaryEmployees = employees.stream()
-                .filter(emp -> emp.getSalary2() > 60000)
-                .map(Employee::getName)
-                .collect(Collectors.toList());
-
-        System.out.println("\nHigh salary employees (salary > 60000):");
-        System.out.println(highSalaryEmployees);
-
-        // 96. Stream Lazy Evaluation Optimization: Using lazy evaluation to defer computations
-	}
-	private static void extracted13() {
-		List<Employee> employees = Arrays.asList(
-                new Employee(1, "John Doe", 30, 50000, "IT"),
-                new Employee(2, "Jane Smith", 25, 60000, "Finance"),
-                new Employee(3, "Bob Johnson", 35, 75000, "IT"),
-                new Employee(4, "Alice Williams", 28, 45000, "HR"),
-                new Employee(5, "Michael Brown", 32, 80000, "Finance")
-        );
-     // 97. Stream Error Handling: Handling exceptions in stream operations
-        try {
-            Optional<Employee> employee = employees.stream()
-                    .filter(emp -> emp.getAge() < 25)
-                    .findFirst();
-
-            employee.ifPresent(emp -> System.out.println("Employee found: " + emp));
-        } catch (Exception e) {
-            System.err.println("Error occurred: " + e.getMessage());
-        }
-
-        // 98. Stream API Refactoring and Code Smells: Refactoring complex stream pipelines
-        List<String> departments = employees.stream()
-                .map(Employee::getDepartment)
-                .filter(dept -> !dept.isEmpty())
-                .distinct()
-                .collect(Collectors.toList());
-
-        System.out.println("\nDistinct non-empty departments:");
-        System.out.println(departments);
-
-        // 99. Stream Optional and Null Handling: Handling null references and Optional values
-        Employee nullEmployee = null;
-        Optional<Employee> optionalEmployee = Optional.ofNullable(nullEmployee);
-        optionalEmployee.ifPresent(emp -> System.out.println("\nOptional employee found: " + emp));
-
-        // 100. Stream API Best Practices and Patterns: Applying best practices with Java Streams
-        List<String> employeeNames = employees.stream()
-                .filter(emp -> emp.getSalary2() > 50000)
-                .map(Employee::getName)
-                .collect(Collectors.toList());
-
-        System.out.println("\nEmployee names with salary > 50000:");
-        System.out.println(employeeNames);
-
-        // 101. Stream API Performance Considerations: Optimizing stream performance
-        List<Employee> highSalaryEmployees = employees.stream()
-                .parallel()
-                .filter(emp -> emp.getSalary2() > 60000)
-                .collect(Collectors.toList());
-
-        System.out.println("\nHigh salary employees (parallel stream):");
-        System.out.println(highSalaryEmployees);
-
-        // 102. Stream API Debugging Techniques: Using peek for debugging stream operations
-        List<Employee> filteredEmployees = employees.stream()
-                .peek(emp -> System.out.println("Filtering employee: " + emp.getName()))
-                .filter(emp -> emp.getAge() >= 30)
-                .peek(emp -> System.out.println("After filtering: " + emp.getName()))
-                .collect(Collectors.toList());
-
-        System.out.println("\nEmployees filtered by age >= 30:");
-        System.out.println(filteredEmployees);
-
-        // 103. Stream API Use Cases in Real-World Applications: Example in finance domain
-        // Example would involve processing financial data using streams
-
-        // 104. Stream API Integration with External Libraries: Using Guava's Collectors
-        // Example integration with Guava's functional collections for advanced operations
-
-        // 105. Stream API Streamlining and Simplification: Simplifying stream operations
-        List<String> departmentsStartingWithF = employees.stream()
-                .filter(emp -> emp.getDepartment().startsWith("F"))
-                .map(Employee::getDepartment)
-                .collect(Collectors.toList());
-
-        System.out.println("\nDepartments starting with 'F':");
-        System.out.println(departmentsStartingWithF);
-
-        // 106. Stream API Parallelization Strategies: Managing parallel streams and concurrency
-        int totalEmployees = employees.parallelStream()
-                .mapToInt(emp -> 1)
-                .sum();
-
-        System.out.println("\nTotal number of employees (parallel stream): " + totalEmployees);
-
-        // 107. Stream API Performance Testing and Benchmarking: Benchmarking stream performance
-        long startTime = System.currentTimeMillis();
-        List<Employee> filteredByAge = employees.stream()
-                .filter(emp -> emp.getAge() >= 30)
-                .collect(Collectors.toList());
-        long endTime = System.currentTimeMillis();
-
-        System.out.println("\nTime taken to filter employees by age: " + (endTime - startTime) + " ms");
-
-        // 108. Stream API Advanced Sorting and Comparator: Advanced sorting with custom comparators
-        List<Employee> sortedBySalaryDescending = employees.stream()
-                .sorted((emp1, emp2) -> Double.compare(emp2.getSalary2(), emp1.getSalary2()))
-                .collect(Collectors.toList());
-
-        System.out.println("\nEmployees sorted by salary (descending):");
-        System.out.println(sortedBySalaryDescending);
-
-        // 109. Stream API Advanced Grouping and Aggregation: Advanced grouping with Collectors
-        Map<String, Double> averageSalaryByDept = employees.stream()
-                .collect(Collectors.groupingBy(Employee::getDepartment,
-                        Collectors.averagingDouble(Employee::getSalary2)));
-
-        System.out.println("\nAverage salary by department:");
-        averageSalaryByDept.forEach((dept, avgSalary) -> System.out.println(dept + ": " + avgSalary));
-
-        // 110. Stream API Stream Chaining and Composition: Chaining multiple stream operations
-        List<Employee> chainedOperations = employees.stream()
-                .filter(emp -> emp.getSalary2() > 50000)
-                .sorted((emp1, emp2) -> emp1.getName().compareTo(emp2.getName()))
-                .limit(3)
-                .collect(Collectors.toList());
-
-        System.out.println("\nChained operations (filtered, sorted, limited):");
-        System.out.println(chainedOperations);
-	}
+	
 private static void extracted2() {
 	List<Employee> employees = Arrays.asList(
             new Employee(1, "John Doe", 30, 50000, "IT"),
@@ -1001,7 +568,443 @@ private static void extracted2() {
         System.out.println("\nEmployee names (handling errors gracefully):");
         employeeNames.forEach(System.out::println);
 	}
+	private static void extracted10() {
+		List<Employee> employees = Arrays.asList(
+                new Employee(1, "John Doe", 30, 50000, "IT"),
+                new Employee(2, "Jane Smith", 25, 60000, "Finance"),
+                new Employee(3, "Bob Johnson", 35, 75000, "IT"),
+                new Employee(4, "Alice Williams", 28, 45000, "HR"),
+                new Employee(5, "Michael Brown", 32, 80000, "Finance")
+        );
 
+        // 51. Grouping and Aggregating: Group employees by department and find average salary in each department
+        Map<String, Double> averageSalaryByDepartment = employees.stream()
+                .collect(Collectors.groupingBy(Employee::getDepartment,
+                        Collectors.averagingDouble(Employee::getSalary2)));
+
+        System.out.println("Average salary by department:");
+        averageSalaryByDepartment.forEach((dept, avgSalary) ->
+                System.out.println(dept + ": " + avgSalary));
+
+        // 52. Parallel Stream Processing: Using parallel stream to calculate total salary
+        double totalSalaryParallel = employees.parallelStream()
+                .mapToDouble(Employee::getSalary2)
+                .sum();
+
+        System.out.println("\nTotal salary using parallel stream: " + totalSalaryParallel);
+
+        // 53. Combining Streams: Combine employees and their managers into a single stream
+        List<Employee> managers = Arrays.asList(
+                new Employee(6, "Sarah Johnson", 40, 90000, "IT"),
+                new Employee(7, "Emily Davis", 38, 85000, "Finance")
+        );
+
+        Stream<Employee> combinedStream = Stream.concat(
+                employees.stream(),
+                managers.stream());
+
+        System.out.println("\nCombined stream of employees and managers:");
+        combinedStream.forEach(System.out::println);
+
+        // 54. Stream APIs in Collections: Using stream() directly on a list and performing operations
+        List<String> employeeNames = employees.stream()
+                .map(Employee::getName)
+                .collect(Collectors.toList());
+
+        System.out.println("\nEmployee names:");
+        System.out.println(employeeNames);
+
+        // 55. Handling Optional in Streams: Finding the highest salary among employees
+        Optional<Double> maxSalary = employees.stream()
+                .map(Employee::getSalary2)
+                .max(Double::compare);
+
+        maxSalary.ifPresent(max -> System.out.println("\nHighest salary among employees: " + max));
+
+        // 56. State Management: Demonstrating use of effectively final variables in lambda expressions
+        double bonusFactor = 1.1;
+        List<Double> salariesWithBonus = employees.stream()
+                .map(emp -> emp.getSalary2() * bonusFactor)
+                .collect(Collectors.toList());
+
+        System.out.println("\nSalaries with bonus factor applied:");
+        System.out.println(salariesWithBonus);
+
+        // 57. Custom Functional Interfaces: Defining and using a custom functional interface
+        FunctionalInterfaceExample functionalInterface = (a, b) -> a * b;
+        int result = functionalInterface.calculate(5, 10);
+
+        System.out.println("\nResult of custom functional interface: " + result);
+
+        // 58. Stream Performance Profiling: Measuring performance with stream operations
+        long startTime = System.nanoTime();
+        List<Employee> highSalaryEmployees = employees.stream()
+                .filter(emp -> emp.getSalary2() > 60000)
+                .collect(Collectors.toList());
+        long endTime = System.nanoTime();
+        long duration = (endTime - startTime) / 1_000_000; // Milliseconds
+
+        System.out.println("\nTime taken to filter high salary employees: " + duration + " ms");
+
+        // 59. Immutable Streams: Ensure immutability by using Collectors.toUnmodifiableList() for result collection
+        List<String> immutableNames = employees.stream()
+                .map(Employee::getName)
+                .collect(Collectors.toUnmodifiableList());
+
+        // 60. Advanced Stream Patterns: Implementing sliding window pattern using custom logic
+        System.out.println("\nEmployees processed in pairs:");
+        IntStream.range(0, employees.size() - 1)
+                .mapToObj(i -> employees.get(i).getName() + " - " + employees.get(i + 1).getName())
+                .forEach(System.out::println);
+	}
+	private static void extracted11() {
+		List<Employee> employees = Arrays.asList(
+                new Employee(1, "John Doe", 30, 50000, "IT"),
+                new Employee(2, "Jane Smith", 25, 60000, "Finance"),
+                new Employee(3, "Bob Johnson", 35, 75000, "IT"),
+                new Employee(4, "Alice Williams", 28, 45000, "HR"),
+                new Employee(5, "Michael Brown", 32, 80000, "Finance")
+        );
+
+		employees.stream().max(Comparator.comparing(Employee::getAge)).get();
+		
+        // 71. Stream API Collectors: Using toMap() for advanced mapping operations
+        Map<Integer, String> idToNameMap = employees.stream()
+                .collect(Collectors.toMap(Employee::getEmployeeId, Employee::getName));
+
+        System.out.println("Employee ID to Name mapping:");
+        System.out.println(idToNameMap);
+
+        // 72. Stream FlatMap vs Map: Using flatMap to flatten nested lists
+        List<List<String>> nestedSkills = Arrays.asList(
+                Arrays.asList("Java", "Spring"),
+                Arrays.asList("Python", "Django"),
+                Arrays.asList("JavaScript", "React", "Node.js")
+        );
+
+        List<String> allSkills = nestedSkills.stream()
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
+
+        System.out.println("\nAll skills combined from nested lists:");
+        System.out.println(allSkills);
+
+        // 73. Stream Reduce: Using reduce to find the highest salary
+        Optional<Double> maxSalary = employees.stream()
+                .map(Employee::getSalary2)
+                .reduce(Double::max);
+
+        maxSalary.ifPresent(max -> System.out.println("\nHighest salary among employees: " + max));
+
+        // 74. Stream CollectingAndThen: Using collectingAndThen for post-processing after collection
+        List<Employee> highPaidEmployees = employees.stream()
+                .filter(emp -> emp.getSalary2() > 70000)
+                .collect(Collectors.collectingAndThen(
+                        Collectors.toList(),
+                        Collections::unmodifiableList
+                ));
+
+        System.out.println("\nHigh paid employees (salary > 70000):");
+        highPaidEmployees.forEach(System.out::println);
+
+        // 75. Stream GroupingBy with Downstream Collectors: Grouping employees by department and finding average salary
+        Map<String, Double> averageSalaryByDepartment = employees.stream()
+                .collect(Collectors.groupingBy(Employee::getDepartment,
+                        Collectors.averagingDouble(Employee::getSalary2)));
+
+        System.out.println("\nAverage salary by department:");
+        averageSalaryByDepartment.forEach((dept, avgSalary) ->
+                System.out.println(dept + ": " + avgSalary));
+
+        // 76. Stateful Transformations: Using Stream.iterate for stateful transformations
+        List<Integer> powersOfTwo = Stream.iterate(1, n -> n * 2)
+                .limit(5)
+                .collect(Collectors.toList());
+
+        System.out.println("\nPowers of two:");
+        System.out.println(powersOfTwo);
+
+        // 77. Stream Filtering and Mapping: Advanced filtering and mapping with predicates and functions
+        List<String> namesStartingWithJ = employees.stream()
+                .filter(emp -> emp.getName().startsWith("J"))
+                .map(Employee::getName)
+                .collect(Collectors.toList());
+
+        System.out.println("\nEmployee names starting with 'J':");
+        System.out.println(namesStartingWithJ);
+
+        // 78. Stream Peeking and Side Effects: Using peek for debugging and logging in stream pipelines
+        List<Employee> employeesWithHighSalary = employees.stream()
+                .peek(emp -> System.out.println("Processing employee: " + emp.getName()))
+                .filter(emp -> emp.getSalary2() > 60000)
+                .collect(Collectors.toList());
+
+        System.out.println("\nEmployees with salary > 60000:");
+        employeesWithHighSalary.forEach(System.out::println);
+
+        // 79. Stream Iteration and Streams of Primitives: Using IntStream to calculate sum of employee ages
+        int totalAge = employees.stream()
+                .mapToInt(Employee::getAge)
+                .sum();
+
+        System.out.println("\nTotal age of all employees: " + totalAge);
+
+        // 80. Custom Stream Operations: Defining and using custom stream operations with lambdas and functional interfaces
+        List<Employee> filteredByAgeRange = employees.stream()
+                .filter(ageBetween(25, 35))
+                .collect(Collectors.toList());
+
+        System.out.println("\nEmployees aged between 25 and 35:");
+        filteredByAgeRange.forEach(System.out::println);
+	}
+	private static void extracted12() {
+		List<Employee> employees = Arrays.asList(
+                new Employee(1, "John Doe", 30, 50000, "IT"),
+                new Employee(2, "Jane Smith", 25, 60000, "Finance"),
+                new Employee(3, "Bob Johnson", 35, 75000, "IT"),
+                new Employee(4, "Alice Williams", 28, 45000, "HR"),
+                new Employee(5, "Michael Brown", 32, 80000, "Finance")
+        );
+
+        // 81. Stream Collectors.joining: Concatenate employee names into a single string
+        String allNames = employees.stream()
+                .map(Employee::getName)
+                .collect(Collectors.joining(", "));
+
+        System.out.println("All employee names: " + allNames);
+
+        // 82. Stream Partitioning: Partition employees into two groups based on salary threshold
+        Map<Boolean, List<Employee>> salaryPartition = employees.stream()
+                .collect(Collectors.partitioningBy(emp -> emp.getSalary2() >= 60000));
+
+        System.out.println("\nEmployees partitioned by salary >= 60000:");
+        System.out.println("High salary: " + salaryPartition.get(true));
+        System.out.println("Low salary: " + salaryPartition.get(false));
+
+        // 83. Stream Custom Reduction: Custom reduction to find the total salary of all employees
+        Double totalSalary = employees.stream()
+                .collect(Collectors.reducing(0.0, Employee::getSalary2, Double::sum));
+
+        System.out.println("\nTotal salary of all employees: " + totalSalary);
+
+        // 84. Stream Custom Collectors: Custom collector to concatenate employee names by department
+        Map<String, String> namesByDepartment = employees.stream()
+                .collect(Collectors.groupingBy(Employee::getDepartment,
+                        Collectors.mapping(Employee::getName, Collectors.joining(", "))));
+
+        System.out.println("\nEmployee names by department:");
+        namesByDepartment.forEach((dept, names) -> System.out.println(dept + ": " + names));
+
+        // 85. Stream Infinite Streams: Generate infinite stream of random numbers and limit to 10
+        List<Integer> randomNumbers = IntStream.generate(() -> (int) (Math.random() * 100))
+                .limit(10)
+                .boxed()
+                .collect(Collectors.toList());
+
+        System.out.println("\nGenerated random numbers:");
+        System.out.println(randomNumbers);
+
+        // 86. Stream Primitives and Boxing: Map int ages to Integer and find average age
+        OptionalDouble averageAge = employees.stream()
+                .mapToInt(Employee::getAge)
+                .average();
+
+        System.out.println("\nAverage age of employees: " + (averageAge.isPresent() ? averageAge.getAsDouble() : "N/A"));
+
+        // 87. Stream Stateful Operations: Building a stream with Stream.Builder
+        Stream.Builder<Employee> employeeBuilder = Stream.builder();
+        employees.forEach(employeeBuilder::add);
+
+        System.out.println("\nStream of employees built with Stream.Builder:");
+        employeeBuilder.build().forEach(System.out::println);
+
+        // 88. Stream Limiting and Skipping: Limiting and skipping elements in a stream
+        List<Employee> limitedEmployees = employees.stream()
+                .skip(2)
+                .limit(2)
+                .collect(Collectors.toList());
+
+        System.out.println("\nEmployees after skipping 2 and limiting to 2:");
+        limitedEmployees.forEach(System.out::println);
+
+        // 89. Stream Min and Max: Finding employee with minimum and maximum salary
+        Optional<Employee> minSalaryEmployee = employees.stream()
+                .min((emp1, emp2) -> Double.compare(emp1.getSalary2(), emp2.getSalary2()));
+
+        Optional<Employee> maxSalaryEmployee = employees.stream()
+                .max((emp1, emp2) -> Double.compare(emp1.getSalary2(), emp2.getSalary2()));
+
+        System.out.println("\nEmployee with minimum salary: " + minSalaryEmployee.orElse(null));
+        System.out.println("Employee with maximum salary: " + maxSalaryEmployee.orElse(null));
+
+        // 90. Stream Distinct: Finding distinct departments among employees
+        List<String> distinctDepartments = employees.stream()
+                .map(Employee::getDepartment)
+                .distinct()
+                .collect(Collectors.toList());
+
+        System.out.println("\nDistinct departments among employees:");
+        System.out.println(distinctDepartments);
+
+        // 91. Stream Sorted: Sorting employees by department and age
+        List<Employee> sortedEmployees = employees.stream()
+                .sorted((emp1, emp2) -> {
+                    if (emp1.getDepartment().equals(emp2.getDepartment())) {
+                        return emp1.getAge() - emp2.getAge();
+                    } else {
+                        return emp1.getDepartment().compareTo(emp2.getDepartment());
+                    }
+                })
+                .collect(Collectors.toList());
+
+        System.out.println("\nEmployees sorted by department and age:");
+        sortedEmployees.forEach(System.out::println);
+
+        // 92. Stream Peek vs ForEach: Using peek and forEach for debugging and terminal actions
+        employees.stream()
+                .peek(emp -> System.out.println("Processing employee: " + emp.getName()))
+                .forEach(emp -> System.out.println("Finished processing: " + emp.getName()));
+
+        // 93. Stream Reduce with Identity and Accumulator: Using reduce with identity and accumulator functions
+        Optional<Employee> highestPaidEmployee = employees.stream()
+                .reduce((emp1, emp2) -> emp1.getSalary2() > emp2.getSalary2() ? emp1 : emp2);
+
+        System.out.println("\nEmployee with highest salary: " + highestPaidEmployee.orElse(null));
+
+        // 94. Stream Parallel Processing and Thread Safety: Handling thread safety with parallel streams
+        employees.parallelStream()
+                .forEach(emp -> System.out.println("Employee processed in parallel: " + emp.getName()));
+
+        // 95. Stream Performance Tuning: Optimizing performance with fewer pipeline stages
+        List<String> highSalaryEmployees = employees.stream()
+                .filter(emp -> emp.getSalary2() > 60000)
+                .map(Employee::getName)
+                .collect(Collectors.toList());
+
+        System.out.println("\nHigh salary employees (salary > 60000):");
+        System.out.println(highSalaryEmployees);
+
+        // 96. Stream Lazy Evaluation Optimization: Using lazy evaluation to defer computations
+	}
+	private static void extracted13() {
+		List<Employee> employees = Arrays.asList(
+                new Employee(1, "John Doe", 30, 50000, "IT"),
+                new Employee(2, "Jane Smith", 25, 60000, "Finance"),
+                new Employee(3, "Bob Johnson", 35, 75000, "IT"),
+                new Employee(4, "Alice Williams", 28, 45000, "HR"),
+                new Employee(5, "Michael Brown", 32, 80000, "Finance")
+        );
+     // 97. Stream Error Handling: Handling exceptions in stream operations
+        try {
+            Optional<Employee> employee = employees.stream()
+                    .filter(emp -> emp.getAge() < 25)
+                    .findFirst();
+
+            employee.ifPresent(emp -> System.out.println("Employee found: " + emp));
+        } catch (Exception e) {
+            System.err.println("Error occurred: " + e.getMessage());
+        }
+
+        // 98. Stream API Refactoring and Code Smells: Refactoring complex stream pipelines
+        List<String> departments = employees.stream()
+                .map(Employee::getDepartment)
+                .filter(dept -> !dept.isEmpty())
+                .distinct()
+                .collect(Collectors.toList());
+
+        System.out.println("\nDistinct non-empty departments:");
+        System.out.println(departments);
+
+        // 99. Stream Optional and Null Handling: Handling null references and Optional values
+        Employee nullEmployee = null;
+        Optional<Employee> optionalEmployee = Optional.ofNullable(nullEmployee);
+        optionalEmployee.ifPresent(emp -> System.out.println("\nOptional employee found: " + emp));
+
+        // 100. Stream API Best Practices and Patterns: Applying best practices with Java Streams
+        List<String> employeeNames = employees.stream()
+                .filter(emp -> emp.getSalary2() > 50000)
+                .map(Employee::getName)
+                .collect(Collectors.toList());
+
+        System.out.println("\nEmployee names with salary > 50000:");
+        System.out.println(employeeNames);
+
+        // 101. Stream API Performance Considerations: Optimizing stream performance
+        List<Employee> highSalaryEmployees = employees.stream()
+                .parallel()
+                .filter(emp -> emp.getSalary2() > 60000)
+                .collect(Collectors.toList());
+
+        System.out.println("\nHigh salary employees (parallel stream):");
+        System.out.println(highSalaryEmployees);
+
+        // 102. Stream API Debugging Techniques: Using peek for debugging stream operations
+        List<Employee> filteredEmployees = employees.stream()
+                .peek(emp -> System.out.println("Filtering employee: " + emp.getName()))
+                .filter(emp -> emp.getAge() >= 30)
+                .peek(emp -> System.out.println("After filtering: " + emp.getName()))
+                .collect(Collectors.toList());
+
+        System.out.println("\nEmployees filtered by age >= 30:");
+        System.out.println(filteredEmployees);
+
+        // 103. Stream API Use Cases in Real-World Applications: Example in finance domain
+        // Example would involve processing financial data using streams
+
+        // 104. Stream API Integration with External Libraries: Using Guava's Collectors
+        // Example integration with Guava's functional collections for advanced operations
+
+        // 105. Stream API Streamlining and Simplification: Simplifying stream operations
+        List<String> departmentsStartingWithF = employees.stream()
+                .filter(emp -> emp.getDepartment().startsWith("F"))
+                .map(Employee::getDepartment)
+                .collect(Collectors.toList());
+
+        System.out.println("\nDepartments starting with 'F':");
+        System.out.println(departmentsStartingWithF);
+
+        // 106. Stream API Parallelization Strategies: Managing parallel streams and concurrency
+        int totalEmployees = employees.parallelStream()
+                .mapToInt(emp -> 1)
+                .sum();
+
+        System.out.println("\nTotal number of employees (parallel stream): " + totalEmployees);
+
+        // 107. Stream API Performance Testing and Benchmarking: Benchmarking stream performance
+        long startTime = System.currentTimeMillis();
+        List<Employee> filteredByAge = employees.stream()
+                .filter(emp -> emp.getAge() >= 30)
+                .collect(Collectors.toList());
+        long endTime = System.currentTimeMillis();
+
+        System.out.println("\nTime taken to filter employees by age: " + (endTime - startTime) + " ms");
+
+        // 108. Stream API Advanced Sorting and Comparator: Advanced sorting with custom comparators
+        List<Employee> sortedBySalaryDescending = employees.stream()
+                .sorted((emp1, emp2) -> Double.compare(emp2.getSalary2(), emp1.getSalary2()))
+                .collect(Collectors.toList());
+
+        System.out.println("\nEmployees sorted by salary (descending):");
+        System.out.println(sortedBySalaryDescending);
+
+        // 109. Stream API Advanced Grouping and Aggregation: Advanced grouping with Collectors
+        Map<String, Double> averageSalaryByDept = employees.stream()
+                .collect(Collectors.groupingBy(Employee::getDepartment,
+                        Collectors.averagingDouble(Employee::getSalary2)));
+
+        System.out.println("\nAverage salary by department:");
+        averageSalaryByDept.forEach((dept, avgSalary) -> System.out.println(dept + ": " + avgSalary));
+
+        // 110. Stream API Stream Chaining and Composition: Chaining multiple stream operations
+        List<Employee> chainedOperations = employees.stream()
+                .filter(emp -> emp.getSalary2() > 50000)
+                .sorted((emp1, emp2) -> emp1.getName().compareTo(emp2.getName()))
+                .limit(3)
+                .collect(Collectors.toList());
+
+        System.out.println("\nChained operations (filtered, sorted, limited):");
+        System.out.println(chainedOperations);
+	}
 	// Helper method to generate a large data set of employees (for demonstration)
 	private static List<Employee> generateLargeDataSet() {
 	    // Implement your logic to generate a large list of employees
@@ -1014,6 +1017,7 @@ private static void extracted2() {
 	    );
 	}
 	 public static void main(String[] args) {
+		 
         // Example operations using Streams and Lambdas
         extracted1();
         extracted2();
